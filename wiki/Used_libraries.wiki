@@ -1,1 +1,4 @@
 [http://www.bwaldvogel.de/liblinear-java/ Liblinear Java]
+[http://www.csie.ntu.edu.tw/~cjlin/libsvm/ Libsvm]
+[http://jblas.org/ jblas]
+[http://jgrapht.sourceforge.net/ jgrapht]
