@@ -15,6 +15,8 @@ public class ProblemExt extends Problem{
 	private BidirectionalMap<Integer> termmap=new BidirectionalMap<Integer> ();
 	//public for a while, maybe we'll change it to private
 	public Hierarchy hierarchy;
+	//for active learning:
+	public HashMap<Integer, Integer> seedData;
 	public ProblemExt() {
 		super();
 	}
