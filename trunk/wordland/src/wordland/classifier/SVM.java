@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 import wordland.*;
+import wordland.competitions.lsthc09.Params;
 import wordland.data.IndexValue;
 import wordland.data.ParameterExt;
 import wordland.data.ProblemExt;
@@ -52,5 +53,20 @@ public class SVM implements PClassifier{
 			}
 		}
 		return ret;			
+	}
+	public double [] testDecValues(ProblemExt prob) {
+		double [] ret = new double [prob.l];
+		for (int i=0; i<prob.l; i++)
+			ret[i]=decisionValue(prob.x[i]);
+		return ret;
+	}
+	private double decisionValue(FeatureNode [] x) {
+		double [] dec = new double [model.getNrClass()];
+		int [] labs = new int [model.getNrClass()];
+		double decv;
+		labs = model.getLabels();
+		Linear.predictValues(model, x, dec);
+		decv = (labs[0]*2-1)*dec[0]; //?????????????
+		return decv;
 	}
 }
