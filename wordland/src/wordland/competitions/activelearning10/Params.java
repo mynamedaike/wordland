@@ -9,8 +9,8 @@ public class Params {
 
 //	public static final String dataSet = "alex";
 //	public static final String dataSet = "hiva";
-	public static final String dataSet = "ibn_sina";
-//	public static final String dataSet = "nova";
+//	public static final String dataSet = "ibn_sina";
+	public static final String dataSet = "nova";
 //	public static final String dataSet = "orange"; //many NaN's!!!
 //	public static final String dataSet = "sylva";
 //	public static final String dataSet = "zebra"; //NaN's & Inf's!!!
@@ -19,7 +19,7 @@ public class Params {
 	public static final SolverType LibLinearType = SolverType.L2R_L2LOSS_SVC_DUAL;
 }
 
-//SVM:
+//SVM (linear):
 //====
 //alex:
 //===============

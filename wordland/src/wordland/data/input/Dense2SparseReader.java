@@ -99,7 +99,7 @@ public class Dense2SparseReader {
 	private int addSeed(ProblemExt problem, int index, int label) {
 		if (problem.seedData == null)
 			return -1;
-		problem.seedData.put(index, label);
+		problem.seedData.put(index-1, label);
 		return 0;
 	}
 	public static void splitTrainTest(ProblemExt problem, ProblemExt train, ProblemExt test) {

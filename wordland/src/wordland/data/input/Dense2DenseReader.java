@@ -100,7 +100,7 @@ public class Dense2DenseReader {
 	private int addSeed(ProblemDense problem, int index, int label) {
 		if (problem.seedData == null)
 			return -1;
-		problem.seedData.put(index, label);
+		problem.seedData.put(index-1, label);
 		return 0;
 	}
 	public static void splitTrainTest(ProblemDense problem, ProblemDense train, ProblemDense test) {
