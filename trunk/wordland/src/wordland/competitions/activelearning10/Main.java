@@ -17,6 +17,13 @@ import wordland.classifier.*;
 
 public class Main {
 	public static void main(String [] args) {
+		main_mzs(args);
+	}
+	public static void main_mzs(String [] args) {
+		SubmitResults submit=SubmitResults.getInstance();
+		submit.login(null, null);
+	}	
+	public static void main_bz(String [] args) {
 		Dense2SparseReader reader = new Dense2SparseReader(); 
 		ProblemExt problem = reader.readProblem(Params.rootPath+Params.dataSet+".data", Params.rootPath+Params.dataSet+".label", Params.rootPath+Params.dataSet+".seed");
 		ProblemExt train = new ProblemExt();
