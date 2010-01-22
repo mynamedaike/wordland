@@ -6,7 +6,9 @@ import liblinear.SolverType;
 
 public class Params {
 	public static final String rootPath = "G:\\!data\\al\\";
-
+	
+	public static final String passwfile = "C:\\passw.txt";
+	
 //	public static final String dataSet = "alex";
 //	public static final String dataSet = "hiva";
 //	public static final String dataSet = "ibn_sina";
