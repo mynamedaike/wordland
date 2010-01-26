@@ -5,14 +5,14 @@ import java.util.ArrayList;
 import liblinear.SolverType;
 
 public class Params {
-	public static final String rootPath = "G:\\!data\\al\\";
-	
+	//public static final String rootPath = "G:\\!data\\al\\";
+	public static final String rootPath = "C:\\corpus\\al\\";
 	public static final String passwfile = "C:\\passw.txt";
 	
 //	public static final String dataSet = "alex";
 //	public static final String dataSet = "hiva";
-//	public static final String dataSet = "ibn_sina";
-	public static final String dataSet = "nova";
+	public static final String dataSet = "ibn_sina";
+//	public static final String dataSet = "nova";
 //	public static final String dataSet = "orange"; //many NaN's!!!
 //	public static final String dataSet = "sylva";
 //	public static final String dataSet = "zebra"; //NaN's & Inf's!!!

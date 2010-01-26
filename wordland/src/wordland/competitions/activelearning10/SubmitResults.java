@@ -1,6 +1,8 @@
 package wordland.competitions.activelearning10;
 
 import java.io.*;
+import java.util.*;
+import java.util.zip.*;
 
 import org.apache.commons.httpclient.*;
 import org.apache.commons.httpclient.methods.*;
@@ -65,9 +67,38 @@ public final class SubmitResults {
 		}
 		return ret;
 	}
-	public boolean submitResults(String dataname,int [] sample,double [] predict) {
+	public boolean submitResults(String dataname,String expname,int [] sample,double [] predict) {
 		boolean ret=false;
-		
+		try {
+			int i;
+			FileOutputStream file=new FileOutputStream("sent.zip");
+			ZipOutputStream out=new ZipOutputStream(new BufferedOutputStream(file));
+			ZipEntry entry=new ZipEntry(dataname+".sample");
+			out.putNextEntry(entry);
+			ByteArrayOutputStream bos = new ByteArrayOutputStream();
+			PrintWriter bosw=new PrintWriter(bos);
+			for (i=0;i<sample.length;i++) {
+				bosw.println(sample[i]);
+			}
+			bosw.close();
+			out.write(bos.toByteArray());
+			bos.close();
+			
+			entry=new ZipEntry(dataname+".predict");
+			out.putNextEntry(entry);
+			bos=new ByteArrayOutputStream();
+			bosw=new PrintWriter(bos);
+			for (i=0;i<predict.length;i++) {
+				bosw.println(predict[i]);
+			}
+			bosw.close();
+			out.write(bos.toByteArray());
+			bos.close();
+			out.close();
+		}
+		catch (Exception e) {
+			System.out.println(e);
+		}
 		return ret;
 	}
 }
