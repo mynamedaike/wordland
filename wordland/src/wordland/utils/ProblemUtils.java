@@ -412,5 +412,102 @@ public class ProblemUtils {
 		ret.toArray(ret2);
 		return ret2;
 	}
+	/**
+	 * Creates/returns a ProblemExt object from the first argument
+	 * by taking the instances whose indices are stored in ind
+	 * @param b
+	 * @param ind
+	 * @return
+	 */
+	public static ProblemExt createProblemFrom(ProblemExt b, List<Integer> ind) {
+		ProblemExt a = new ProblemExt(b);
+		a.x = new FeatureNode[ind.size()][];
+		a.y = new int[ind.size()];
+		for (int i=0; i<ind.size(); i++) {
+			a.x[i] = b.x[ind.get(i)];
+			a.y[i] = b.y[ind.get(i)];
+		}
+		a.l = ind.size();
+		return a;
+	}
+	/**
+	 * Creates/returns a ProblemExt object from the first argument
+	 * by taking the instances whose indices are stored in ind
+	 * @param b
+	 * @param ind
+	 * @return
+	 */
+	public static ProblemExt createProblemFrom(ProblemExt b, Set<Integer> ind) {
+		ProblemExt a = new ProblemExt(b);
+		a.x = new FeatureNode[ind.size()][];
+		a.y = new int[ind.size()];
+		int j=0;
+		for (int i : ind) {
+			a.x[j] = b.x[i];
+			a.y[j] = b.y[i];
+			j++;
+		}
+		a.l = ind.size();
+		return a;
+	}
+	/**
+	 * Removes elements from b and adds to a as specified
+	 * by the indices in ind. 
+	 * @param a
+	 * @param b
+	 * @param ind
+	 */
+	public static ProblemExt[] addremoveNodes(ProblemExt a, ProblemExt b, List<Integer> ind) {
+		//a += b[I]; b -= b[I]
+		ProblemExt anew = new ProblemExt(a);
+		anew.x = new FeatureNode[a.x.length+ind.size()][];
+		anew.l += ind.size();
+		System.arraycopy(a.x, 0, anew.x, 0, a.x.length);
+		for (int i=0; i<ind.size(); i++){
+			anew.x[a.x.length+i] = b.x[ind.get(i)];
+		}
+		ProblemExt bnew = new ProblemExt(b);
+		bnew.x = new FeatureNode[b.x.length-ind.size()][];
+		bnew.l = b.l-ind.size();
+		Collections.sort(ind); //sort the indices in ascending order
+		int ipos = 0; //index position
+		for (int i=0; i<b.x.length; i++) {
+			if (ipos<ind.size() && ind.get(ipos).equals(i)) {
+				ipos++;
+			} else {
+				bnew.x[i-ipos] = b.x[i];
+			}
+		}
+		if (b.y != null) {
+			anew.y = new int[anew.l];
+			for (int i=0; i<ind.size(); i++)
+				anew.y[a.y.length+i] = b.y[ind.get(i)];
+			bnew.y = new int[bnew.l];
+			ipos = 0;
+			for (int i=0; i<b.y.length; i++)
+				if (ipos<ind.size() && ind.get(ipos).equals(i)) {
+					ipos++;
+				} else {
+					bnew.y[i-ipos] = b.y[i];
+				}
+		}
+		ProblemExt [] ret = new ProblemExt[2];
+		ret[0] = anew;
+		ret[1] = bnew;
+		return ret;
+	}
+	public static ProblemExt union(ProblemExt a, ProblemExt b) {
+		ProblemExt p = new ProblemExt(a);
+		p.l = a.l + b.l;
+		p.x = new FeatureNode[a.x.length + b.x.length][];
+		System.arraycopy(a.x, 0, p.x, 0, a.x.length);
+		System.arraycopy(b.x, 0, p.x, a.x.length, b.x.length);
+		if (a.y != null && b.y != null) {
+			p.y = new int[p.l];
+			System.arraycopy(a.y, 0, p.y, 0, a.l);
+			System.arraycopy(b.y, 0, p.y, a.l, b.l);
+		}
+		return p;
+	}
 	
 }

@@ -10,18 +10,11 @@ import wordland.classifier.activelearning.*;
 
 import wordland.data.input.*;
 import wordland.data.*;
-import wordland.distance.CosDistance;
-import wordland.distance.CosSimilarity;
-import wordland.distance.DistanceMetric;
-import wordland.utils.EvalMeasures;
-import wordland.utils.TFIDF;
-import wordland.utils.Utils;
-import wordland.classifier.*;
-import java.util.*;
+import wordland.utils.*;
 
 public class Main {
 	public static void main(String [] args) {
-		main_mzs(args);
+		main_bz(args);
 	}
 	public static void main_mzs(String [] args) {
 		int i;
@@ -54,6 +47,7 @@ public class Main {
 //		e.printMeasures();
 		SimpleSVMClassifier1 actl=new SimpleSVMClassifier1();
 		actl.setOracle(new KnownLabelOracle());
+		//actl.setOracle(new CompetitionOracle("ibn_sina","javaexp"));
 		actl.train(train, null);
 		actl.test(test);
 	}
