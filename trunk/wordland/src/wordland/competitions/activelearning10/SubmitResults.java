@@ -95,6 +95,25 @@ public final class SubmitResults {
 			out.write(bos.toByteArray());
 			bos.close();
 			out.close();
+			
+			MultipartPostMethod post= new MultipartPostMethod("http://www.causality.inf.ethz.ch/ajax/workbench.php");
+			post.addParameter("action", "newExperiment");
+			post.addParameter("id_user", "240");
+			post.addParameter("model", dataname);
+			post.addParameter("experiment", expname);
+			post.addParameter("FILE1", new File("sent.zip"));
+			
+			int statuscode = client.executeMethod(post);
+			if (statuscode != HttpStatus.SC_OK) {
+				 System.err.println("Method failed: " + post.getStatusLine());
+			}
+			
+			String postret=post.getResponseBodyAsString();
+			if (postret!=null) {
+				if (Integer.parseInt(postret)==1) {
+					ret=true;
+				}
+			}
 		}
 		catch (Exception e) {
 			System.out.println(e);

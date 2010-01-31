@@ -1,22 +1,22 @@
 package wordland.classifier.activelearning;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 
 import liblinear.Parameter;
 
 import wordland.classifier.*;
 import wordland.competitions.activelearning10.Params;
 import wordland.data.*;
-import wordland.distance.CosSimilarity;
-import wordland.distance.DistanceMetric;
-import wordland.utils.EvalMeasures;
+import wordland.distance.*;
+import wordland.utils.*;
+
 
 public abstract class SimpleALClassifier implements ALClassifier{
 	protected Oracle oracle;
 	protected ProblemExt train1;
 	protected ProblemExt test1;
 	protected ProblemExt train;
+	protected HashSet<Integer> already = new HashSet<Integer>();
 	
 	public SimpleALClassifier() {		
 	}
@@ -28,7 +28,7 @@ public abstract class SimpleALClassifier implements ALClassifier{
 		for (Integer seed : trainn.seedData.keySet())
 			trainind.add(seed);
 		trainind.add(mostDifferent(trainn));
-		train1 = ProblemExt.createProblemFrom(trainn, trainind);
+		train1 = ProblemUtils.createProblemFrom(trainn, trainind);
 		///
 		if (train1.y[1] != 0) {
 			System.out.println("Shit!");
@@ -36,63 +36,61 @@ public abstract class SimpleALClassifier implements ALClassifier{
 		}
 		///
 		train=trainn;
+		already.addAll(trainind);
 	}
 	public int [] test(ProblemExt test) {
-		test1 = ProblemExt.union(train, test);
+		test1 = ProblemUtils.union(train, test);
 		int [] predlabels=null;
 		int querysize = 10;
-		double [] neededpred = new double [train.l+test.l];
+		double [] neededpred;
 		
 		for (int i=0; i<10; i++) {
-			int j,howfar;
+			int j;
 			System.out.println("train size="+train1.l);
-			double [] pred = trainAndTest_DecValues(train1, train1);
-			for (j=0;j<pred.length;j++) {
-				neededpred[j]=pred[j];
-			}
-			howfar=j;
+			double [] pred;
 			pred = trainAndTest_DecValues(train1, test1);
-			for (j=0;j<pred.length;j++) {
-				neededpred[j+howfar]=pred[j];
-			}
+			neededpred=pred;
 			predlabels=toLabels(pred);
 			EvalMeasures e = new EvalMeasures(test1, null, predlabels, train1.catnum);
 			e.printMeasures();
-			ArrayList<Integer> query = wantedInstances1(Arrays.copyOfRange(pred, 0, train.l-2-i*querysize-1), querysize);
+			double [] trainpred=new double [train.l];
+			System.arraycopy(pred, 0, trainpred, 0, trainpred.length);
+			ArrayList<Integer> query = wantedInstances1(trainpred, already, querysize);
 			if (!oracle.queryLabels(query, neededpred)) {
 				System.out.println("The oracle is not functioning properly!");
+				return null;
 			}
 			for (int q : query) {
 				int label = oracle.getLabel(train, q);
 				train.y[q] = label;
 			}
-			ProblemExt [] ret = ProblemExt.addremoveNodes(train1, test1, query);
-			train1 = ret[0];
-			test1 = ret[1];
+			already.addAll(query);
+			train1 = ProblemUtils.createProblemFrom(train, already);
 		}
 		return predlabels;
 	}
 	public Classifier newInstance() {
 		return new SimpleSVMClassifier1();
 	}
-	public static ArrayList<Integer> wantedInstances1(double [] pred, int size) {
+	public static ArrayList<Integer> wantedInstances1(double [] pred, Set<Integer> notthese,int size) {
+		int i,j;
 		ArrayList<Integer> q = new ArrayList<Integer>();
-		int [] ind = new int[pred.length];
-		for (int i=0; i<ind.length; i++)
-			ind[i] = i;
-		for (int i=0; i<pred.length-1; i++)
-			for (int j=i+1; j<pred.length; j++)
-				if (Math.abs(pred[i]) > Math.abs(pred[j])) {
-					double a1 = pred[i];
-					pred[i] = pred[j];
-					pred[j] = a1;
-					int a2 = ind[i];
-					ind[i] = ind[j];
-					ind[j] = a2;
-				}
-		for (int i=0; i<size; i++) {
-			q.add(ind[i]);
-			System.out.print(pred[i]+" ");
+		ArrayList<ValueIndex> ind = new ArrayList<ValueIndex>();
+		
+		for (i=0; i<pred.length; i++) {
+			ValueIndex vi = new ValueIndex(i,Math.abs(pred[i]));
+			ind.add(vi);
+		}
+		Collections.sort(ind);
+		
+		i=0;j=0;
+		while (i<size && j<ind.size()) {
+			if (!notthese.contains(ind.get(j).index)) {
+				q.add(ind.get(j).index);
+				System.out.print(ind.get(j).value+" ");
+				i++;
+			}
+			j++;
 		}
 		System.out.println();
 		return q;
